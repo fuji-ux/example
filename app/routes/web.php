@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\StudyLogController;
+use App\Http\Controllers\MaterialController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,7 +34,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 // ユーザー用ルート
 Route::group(['middleware' => ['auth:web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
-    Route::resource('study_logs', StudyLogController::class);
+    Route::resource('study_logs', 'StudyLogController');
+    Route::resource('materials', 'MaterialController');
 });
 
 // 管理者用ルート

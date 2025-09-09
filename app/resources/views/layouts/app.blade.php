@@ -71,10 +71,27 @@
                 </div>
             </div>
         </nav>
-
-        <main class="py-4">
+        <div class="d-flex">
+            <!-- サイドバー -->
+            <nav class="bg-light border-end p-3" style="width: 220px; min-height: calc(100vh - 56px);">
+                <h5>メニュー</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a href="{{ url('/dashboard') }}" class="nav-link">ダッシュボード</a></li>
+                    <li class="nav-item"><a href="{{ url('/study_logs') }}" class="nav-link">学習記録</a></li>
+                    <li class="nav-item"><a href="{{ url('/study_schedules') }}" class="nav-link">学習予定</a></li>
+                    <li class="nav-item"><a href="{{ url('/badges') }}" class="nav-link">バッジ</a></li>
+                    <li class="nav-item"><a href="{{ url('/materials') }}" class="nav-link">教材</a></li>
+                     @if(auth()->check() && auth()->user()->is_premium)
+                        <li class="nav-item"><a href="{{ url('/ai_reports') }}" class="nav-link">AIレポート</a></li>
+                    @endif
+                </ul>
+                
+            </nav>
+        <main class="py-4 w-100">
             @yield('content')
         </main>
-    </div>
+        </div>
+
+
 </body>
 </html>

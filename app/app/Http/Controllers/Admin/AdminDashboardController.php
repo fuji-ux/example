@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
+use AppModels\User;
 use App\Models\StudyLog;
 
 class AdminDashboardController extends Controller

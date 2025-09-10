@@ -81,9 +81,13 @@
                     <li class="nav-item"><a href="{{ url('/study_schedules') }}" class="nav-link">学習予定</a></li>
                     <li class="nav-item"><a href="{{ url('/badges') }}" class="nav-link">バッジ</a></li>
                     <li class="nav-item"><a href="{{ url('/materials') }}" class="nav-link">教材</a></li>
-                     @if(auth()->check() && auth()->user()->is_premium)
-                        <li class="nav-item"><a href="{{ url('/ai_reports') }}" class="nav-link">AIレポート</a></li>
-                    @endif
+                    @auth('web')
+                        @if(auth('web')->user()->is_premium)
+                            <li class="nav-item">
+                                <a href="{{ route('ai-reports.index') }}" class="nav-link">AIレポート</a>
+                            </li>
+                        @endif
+                    @endauth
                 </ul>
                 
             </nav>

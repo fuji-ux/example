@@ -17,6 +17,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\StudyLogController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\AiReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,7 +37,15 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
     Route::resource('study_logs', 'StudyLogController');
     Route::resource('materials', 'MaterialController');
+
+    // AIレポート (プレミアユーザー限定)
+    Route::middleware(['premium'])->group(function () {
+        Route::get('ai-reports', [AiReportController::class, 'index'])->name('ai-reports.index');
+        Route::get('ai-reports/{ai_report}', [AiReportController::class, 'show'])->name('ai-reports.show');
+    });
 });
+
+
 
 // 管理者用ルート
 Route::prefix('admin')->group(function () {

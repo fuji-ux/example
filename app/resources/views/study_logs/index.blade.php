@@ -28,7 +28,15 @@
                 <td>{{ gmdate("H:i:s", $log->duration) }}</td>
                 <td>{{ $log->start_time }}</td>
                 <td>{{ $log->end_time }}</td>
-                <td><a href="{{ route('study_logs.show', $log) }}" class="btn btn-sm btn-info">詳細</a></td>
+                <td>
+                    <a href="{{ route('study_logs.edit', $log) }}" class="btn btn-sm btn-warning">編集</a>
+                    <form action="{{ route('study_logs.destroy', $log) }}" method="POST" style="display:inline-block;"
+                        onsubmit="return confirm('本当に削除しますか？');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                    </form>
+                </td>
             </tr>
             @endforeach
         </tbody>

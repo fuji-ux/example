@@ -18,6 +18,8 @@ class StudyLog extends Model
 
     protected $casts = [
         'ai_analyzed' => 'boolean',
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     // リレーション

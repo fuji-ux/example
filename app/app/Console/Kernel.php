@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        \App\Console\Commands\GenerateAiReports::class,
     ];
 
     /**
@@ -24,8 +24,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        // 毎週月曜0時 → 週次レポート
+        //$schedule->command('ai:generate-reports --type=weekly')->weeklyOn(1, '0:00');
+
+        // 毎月1日0時 → 月次レポート
+        //$schedule->command('ai:generate-reports --type=monthly')->monthlyOn(1, '0:00');
     }
 
     /**
@@ -38,5 +41,8 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
+
+        
     }
+
 }

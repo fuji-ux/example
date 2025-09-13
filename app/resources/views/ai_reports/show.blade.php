@@ -23,7 +23,7 @@
     <div class="card mb-3">
         <div class="card-header"><strong>概要</strong></div>
         <div class="card-body">
-            <div>{{ $ai_report->summary['text'] }}</div>
+            <div>{{ $ai_report->summary }}</div>
         </div>
     </div>
 

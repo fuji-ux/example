@@ -22,7 +22,7 @@ class CreateAiReportsTable extends Migration
             $table->string('unique_key', 50)->unique();
             $table->json('summary');
             $table->text('ai_feedback')->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

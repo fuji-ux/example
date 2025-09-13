@@ -73,6 +73,7 @@
         </nav>
         <div class="d-flex">
             <!-- サイドバー -->
+            @auth
             <nav class="bg-light border-end p-3" style="width: 220px; min-height: calc(100vh - 56px);">
                 <h5>メニュー</h5>
                 <ul class="nav flex-column">
@@ -89,8 +90,8 @@
                         @endif
                     @endauth
                 </ul>
-                
             </nav>
+            @endauth
         <main class="py-4 w-100">
             @yield('content')
         </main>

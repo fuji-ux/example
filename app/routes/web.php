@@ -35,6 +35,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 // ユーザー用ルート
 Route::group(['middleware' => ['auth:web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('user.dashboard');
+    Route::resource('mypage', 'MypageController')->only(['index', 'update']);
     Route::resource('study_logs', 'StudyLogController');
     Route::resource('materials', 'MaterialController');
 
@@ -42,6 +43,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::middleware(['premium'])->group(function () {
         Route::get('ai-reports', [AiReportController::class, 'index'])->name('ai-reports.index');
         Route::get('ai-reports/{ai_report}', [AiReportController::class, 'show'])->name('ai-reports.show');
+        Route::get('/ai-reports/{id}/export/pdf', [AiReportController::class, 'exportPdf'])->name('ai-reports.export.pdf');
     });
 });
 

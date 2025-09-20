@@ -9,6 +9,7 @@ use App\AiReport;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 
+
 class GenerateAiReports extends Command
 {
     /**
@@ -67,24 +68,59 @@ class GenerateAiReports extends Command
             }
 
             // === 集計 ===
-            $totalDuration = $logs->sum('duration');
+            $totalDuration = round($logs->sum('duration') / 60, 1);
             $avgFocus      = round($logs->avg('focus_score'), 2);
             $avgUnderstanding = round($logs->avg('understanding_score'), 2);
 
+            // 曜日ごとの合計時間
+            $byWeekday = $logs->groupBy(function ($log) {
+                return Carbon::parse($log->start_time)->format('D'); // Mon, Tue, ...
+            })->map(function ($group) {
+                return round($group->sum('duration') / 60, 1);
+            });
+
+            // 時間帯ごとの合計時間
+            $byTimeSlot = $logs->groupBy(function ($log) {
+                $hour = Carbon::parse($log->start_time)->hour;
+                if ($hour >= 5 && $hour < 12) return 'morning';
+                if ($hour >= 12 && $hour < 17) return 'afternoon';
+                if ($hour >= 17 && $hour < 21) return 'evening';
+                return 'night';
+            })->map(function ($group) {
+                    return round($group->sum('duration') / 60, 1);
+            });
+
+            // JSON summary
+            $summary = [
+                'total_duration' => $totalDuration,
+                'avg_focus' => $avgFocus,
+                'avg_understanding' => $avgUnderstanding,
+                'by_weekday' => $byWeekday,
+                'by_timeslot' => $byTimeSlot,
+            ];
+
             // === プロンプト作成 ===
-            $prompt = "以下の学習データをもとに{$reportType}レポートをMarkdown形式で作成してください。
+            $prompt = "以下の学習データを分析し、日本語でやさしくわかりやすい{$reportType}レポートを作成してください。
+                       文章は『です・ます調』で出力してください。
+                       出力は必ずMarkdown形式で、以下の見出しを含めてください。
 
-                    【学習データ】
-                    合計学習時間: {$totalDuration}分
-                    平均集中度: {$avgFocus}
-                    均理解度: {$avgUnderstanding}
+                        ## 学習状況の要約
+                        - （100文字程度で簡潔に）
 
-                    【出力フォーマット】
-                    1. 学習状況の要約（100文字程度）
-                    2. 学習の強み（3点、箇条書き）
-                    3. 改善が必要な点（3点、箇条書き）
-                    4. 次回に向けた具体的アドバイス（箇条書き）
-                    ";
+                        ## 学習の強み
+                        - 箇条書きで3点
+
+                        ## 改善点
+                        - 箇条書きで3点
+
+                        ## 次回へのアドバイス
+                        - 箇条書きで3点
+
+                        【学習データ】
+                        合計学習時間: {$totalDuration}分
+                        平均集中度: {$avgFocus}
+                        平均理解度: {$avgUnderstanding}
+                        ";
 
             // === OpenAI API 呼び出し（Guzzle） ===
             $client = new Client([
@@ -132,7 +168,7 @@ class GenerateAiReports extends Command
                     'report_type'  => $reportType,
                     'period_start' => $periodStart,
                     'period_end'   => $periodEnd,
-                    'summary'      => $aiText,
+                    'summary'      => json_encode($summary, JSON_UNESCAPED_UNICODE),
                     'ai_feedback'  => $aiText,
                 ]
             );

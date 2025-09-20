@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AiReport;
 use Illuminate\Http\Request;
+use PDF; // barryvdh/laravel-dompdf
 
 class AiReportController extends Controller
 {
@@ -25,7 +26,21 @@ class AiReportController extends Controller
             abort(403, 'このレポートにはアクセスできません');
         }
 
-        // 変数名を修正：`$ai_report`をビューに渡します
-        return view('ai_reports.show', compact('ai_report'));
+        $summary = json_decode($ai_report->summary, true);
+
+        return view('ai_reports.show', compact('summary','ai_report'));
+    }
+
+    public function exportPdf($id)
+    {
+        $report = AiReport::findOrFail($id);
+        $summary = json_decode($report->summary, true);
+
+        $pdf = PDF::loadView('ai_reports.export', [
+            'report' => $report,
+            'summary' => $summary,
+        ]);
+
+        return $pdf->download("ai_report_{$report->id}.pdf");
     }
 }

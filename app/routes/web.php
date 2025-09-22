@@ -12,12 +12,18 @@
 */
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\AdminLoginController;
+
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\StudyLogController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\AiReportController;
+use App\Http\Controllers\MypageController;
+
+use App\Http\Controllers\Admin\AdminDashboardController;
+use Admin\AdminUserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -51,7 +57,12 @@ Route::group(['middleware' => ['auth:web']], function () {
 
 // 管理者用ルート
 Route::prefix('admin')->group(function () {
+    Route::get('login', [App\Http\Controllers\Auth\AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('login', [App\Http\Controllers\Auth\AdminLoginController::class, 'login'])->name('admin.login.submit');
+    Route::post('logout', [App\Http\Controllers\Auth\AdminLoginController::class, 'logout'])->name('admin.logout');
+
     Route::group(['middleware' => ['auth:admin']], function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::resource('users', AdminUserController::class)->only(['index', 'update', 'destroy']);
     });
 });

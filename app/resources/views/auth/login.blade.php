@@ -65,6 +65,14 @@
                             </div>
                         </div>
                     </form>
+                    
+                    {{-- 管理者ログインリンクを追加 --}}
+                    <div class="text-center mt-3">
+                        <a href="{{ route('admin.login') }}" class="btn btn-link">
+                            管理者ログインはこちら
+                        </a>
+                    </div>
+                    
                 </div>
             </div>
         </div>

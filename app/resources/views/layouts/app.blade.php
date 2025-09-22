@@ -74,53 +74,59 @@
             </div>
         </nav>
         <div class="d-flex">
-            <!-- サイドバー -->
-            @auth
-            <nav class="bg-light border-end p-3" style="width: 220px; min-height: calc(100vh - 56px);">
-                <h5>メニュー</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a href="{{ url('/dashboard') }}" class="nav-link">ダッシュボード</a></li>
-                    <li class="nav-item"><a href="{{ url('/mypage') }}" class="nav-link">マイページ</a></li>
-                    <li class="nav-item"><a href="{{ url('/study_logs') }}" class="nav-link">学習記録</a></li>
-                    <li class="nav-item"><a href="{{ url('/study_schedules') }}" class="nav-link">学習予定</a></li>
-                    <li class="nav-item"><a href="{{ url('/badges') }}" class="nav-link">バッジ</a></li>
-                    <li class="nav-item"><a href="{{ url('/materials') }}" class="nav-link">教材</a></li>
-                    @auth('web')
-                    @if(auth('web')->user()->is_premium)
-                    <li class="nav-item">
-                        <a href="{{ route('ai-reports.index') }}" class="nav-link">AIレポート</a>
-                    </li>
+            <<!-- サイドバー -->
+                @auth
+                <nav class="bg-light border-end p-3" style="width: 220px; min-height: calc(100vh - 56px);">
+                    <h5>メニュー</h5>
+                    <ul class="nav flex-column">
+                        @if(auth('admin')->check())
+                        {{-- 管理者ログイン時 --}}
+                        <li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link">ユーザー管理</a></li>
+                        @else
+                        {{-- 一般ユーザーログイン時 --}}
+                        <li class="nav-item"><a href="{{ url('/dashboard') }}" class="nav-link">ダッシュボード</a></li>
+                        <li class="nav-item"><a href="{{ url('/mypage') }}" class="nav-link">マイページ</a></li>
+                        <li class="nav-item"><a href="{{ url('/study_logs') }}" class="nav-link">学習記録</a></li>
+                        <li class="nav-item"><a href="{{ url('/study_schedules') }}" class="nav-link">学習予定</a></li>
+                        <li class="nav-item"><a href="{{ url('/badges') }}" class="nav-link">バッジ</a></li>
+                        <li class="nav-item"><a href="{{ url('/materials') }}" class="nav-link">教材</a></li>
+                        @if(auth()->user()->is_premium)
+                        <li class="nav-item">
+                            <a href="{{ route('ai-reports.index') }}" class="nav-link">AIレポート</a>
+                        </li>
+                        @endif
+                        @endif
+                    </ul>
+                </nav>
+
+
+                @endauth
+                <main class="py-4 w-100">
+                    {{-- ✅ フラッシュメッセージ --}}
+                    @if (session('success'))
+                    <div class="container mb-3">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
                     @endif
-                    @endauth
-                </ul>
-            </nav>
-            @endauth
-            <main class="py-4 w-100">
-                {{-- ✅ フラッシュメッセージ --}}
-                @if (session('success'))
-                <div class="container mb-3">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                </div>
-                @endif
 
-                @if (session('error'))
-                <div class="container mb-3">
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ session('error') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                    @if (session('error'))
+                    <div class="container mb-3">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                @endif
+                    @endif
 
-                @yield('content')
-            </main>
+                    @yield('content')
+                </main>
         </div>
 
 

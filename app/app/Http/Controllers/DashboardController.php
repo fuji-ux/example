@@ -13,39 +13,31 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // 今週・今月の学習時間
-        $totalDurationWeek = \App\StudyLog::where('user_id', $user->id)
+        // 今週のスコア（例: 平均値）
+        $logs = $user->studyLogs()
             ->whereBetween('start_time', [now()->startOfWeek(), now()->endOfWeek()])
-            ->sum('duration');
+            ->get();
 
-        $totalDurationMonth = \App\StudyLog::where('user_id', $user->id)
-            ->whereMonth('start_time', now()->month)
-            ->sum('duration');
+        $avgFocus = round($logs->avg('focus_score'), 1) ?? 0;
+        $avgUnderstanding = round($logs->avg('understanding_score'), 1) ?? 0;
+        $avgMotivation = round($logs->avg('motivation_score'), 1) ?? 0;
 
-        // 平均集中度・理解度
-        $avgFocus = \App\StudyLog::where('user_id', $user->id)->avg('focus_score');
-        $avgUnderstanding = \App\StudyLog::where('user_id', $user->id)->avg('understanding_score');
+        // 曜日別の学習時間 × 教材ごと
+        $studyTimeByWeekday = [];
+        $materials = $user->materials()->pluck('name')->toArray();
 
-        // 直近5件の学習ログ
-        $recentLogs = \App\StudyLog::where('user_id', $user->id)
-            ->orderBy('start_time', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($log) {
-                return [
-                    'date' => \Carbon\Carbon::parse($log->start_time)->format('Y-m-d'),
-                    'duration' => $log->duration,
-                ];
-            });
+        foreach ($logs as $log) {
+            $day = $log->start_time->format('D'); // "Mon", "Tue", ...
+            $material = $log->material_name;
+            $studyTimeByWeekday[$day][$material] = ($studyTimeByWeekday[$day][$material] ?? 0) + $log->duration;
+        }
 
-        // ダッシュボードに渡すデータ
-        $summary = [
-            'total_duration_week' => round($totalDurationWeek / 60 ,1),
-            'total_duration_month' => round($totalDurationMonth / 60 ,1),
-            'avg_focus' => round($avgFocus, 2),
-            'avg_understanding' => round($avgUnderstanding, 2),
-        ];
-
-        return view('dashboard.index', compact('user', 'summary', 'recentLogs'));
+        return view('dashboard.index', compact(
+            'avgFocus',
+            'avgUnderstanding',
+            'avgMotivation',
+            'studyTimeByWeekday',
+            'materials'
+        ));
     }
 }

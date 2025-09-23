@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::get('ai-reports', [AiReportController::class, 'index'])->name('ai-reports.index');
         Route::get('ai-reports/{ai_report}', [AiReportController::class, 'show'])->name('ai-reports.show');
         Route::get('/ai-reports/{id}/export/pdf', [AiReportController::class, 'exportPdf'])->name('ai-reports.export.pdf');
+        Route::get('/ai-reports/list/{type}', [App\Http\Controllers\AIReportController::class, 'list'])->name('ai-reports.list');
     });
 });
 

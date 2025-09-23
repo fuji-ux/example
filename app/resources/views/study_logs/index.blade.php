@@ -5,10 +5,6 @@
     <h1>学習記録一覧</h1>
     <a href="{{ route('study_logs.create') }}" class="btn btn-primary mb-3">新規追加</a>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
     <table class="table table-striped">
         <thead>
             <tr>

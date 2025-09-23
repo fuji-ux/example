@@ -85,7 +85,7 @@
                         @else
                         {{-- 一般ユーザーログイン時 --}}
                         <li class="nav-item"><a href="{{ url('/dashboard') }}" class="nav-link">ダッシュボード</a></li>
-                        <li class="nav-item"><a href="{{ url('/mypage') }}" class="nav-link">マイページ</a></li>
+                        <li class="nav-item"><a href="{{ url('/mypage') }}" class="nav-link">登録情報変更</a></li>
                         <li class="nav-item"><a href="{{ url('/study_logs') }}" class="nav-link">学習記録</a></li>
                         <li class="nav-item"><a href="{{ url('/study_schedules') }}" class="nav-link">学習予定</a></li>
                         <li class="nav-item"><a href="{{ url('/badges') }}" class="nav-link">バッジ</a></li>
@@ -124,12 +124,11 @@
                         </div>
                     </div>
                     @endif
-
                     @yield('content')
                 </main>
         </div>
 
-
+        @yield('scripts')
 </body>
 
 </html>

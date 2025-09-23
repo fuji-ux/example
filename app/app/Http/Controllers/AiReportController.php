@@ -15,7 +15,11 @@ class AiReportController extends Controller
             ->orderBy('period_start', 'desc')
             ->get();
 
-        return view('ai_reports.index', compact('reports'));
+        $weeklyReports = AiReport::where('report_type', 'weekly')
+        ->where('user_id', auth()->id())
+        ->latest()->get();
+
+        return view('ai_reports.index', compact('reports', 'weeklyReports'));
     }
 
     // 詳細表示
@@ -28,7 +32,7 @@ class AiReportController extends Controller
 
         $summary = json_decode($ai_report->summary, true);
 
-        return view('ai_reports.show', compact('summary','ai_report'));
+        return view('ai_reports.show', compact('summary', 'ai_report'));
     }
 
     public function exportPdf($id)
@@ -43,4 +47,25 @@ class AiReportController extends Controller
 
         return $pdf->download("ai_report_{$report->id}.pdf");
     }
+
+public function list($type)
+{
+    $user = auth()->user();
+
+    if ($type === 'weekly') {
+        $reports = AIReport::where('user_id', $user->id)
+            ->where('report_type', 'weekly')
+            ->orderBy('period_start', 'desc')
+            ->get();
+    } elseif ($type === 'monthly') {
+        $reports = AIReport::where('user_id', $user->id)
+            ->where('report_type', 'monthly')
+            ->orderBy('period_start', 'desc')
+            ->get();
+    } else {
+        $reports = collect(); // 万が一の空データ
+    }
+
+    return view('ai_reports.partials.list', compact('reports'));
+}
 }

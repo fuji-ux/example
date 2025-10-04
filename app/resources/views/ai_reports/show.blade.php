@@ -54,6 +54,7 @@
             </div>
         </div>
     </div>
+    <a href="{{ route('ai-reports.export.csv', $ai_report->id) }}" class="btn btn-success">CSVエクスポート</a>
     <a href="{{ route('ai-reports.export.pdf', $ai_report->id) }}" class="btn btn-primary">PDFエクスポート</a>
     <a href="{{ route('ai-reports.index') }}" class="btn btn-secondary">一覧に戻る</a>
 </div>
